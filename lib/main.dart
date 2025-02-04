@@ -3,6 +3,7 @@ import 'package:minimal_weather_app/pages/weather_page.dart';
 import 'package:minimal_weather_app/utils/colors.dart';
 
 // TODO: Add Bebas Neue font and adjust UI
+// TODO: Add more weather animations
 
 void main() {
   runApp(const MainApp());
