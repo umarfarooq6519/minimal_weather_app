@@ -43,7 +43,7 @@ class MainApp extends StatelessWidget {
     return IconButtonThemeData(
       style: ButtonStyle(
         iconColor: WidgetStatePropertyAll(DarkMode.foreground),
-        iconSize: WidgetStatePropertyAll(26),
+        iconSize: WidgetStatePropertyAll(20),
       ),
     );
   }
@@ -59,6 +59,7 @@ class MainApp extends StatelessWidget {
       displayLarge: TextStyle(color: DarkMode.foreground),
       headlineMedium: TextStyle(color: DarkMode.foreground),
       titleLarge: TextStyle(color: DarkMode.foreground),
+      titleMedium: TextStyle(color: DarkMode.foreground),
     );
   }
 }

@@ -4,11 +4,11 @@ import 'package:geolocator/geolocator.dart';
 import 'package:geocoding/geocoding.dart';
 import 'package:minimal_weather_app/models/weather.model.dart';
 
-class Weatherservice {
+class WeatherService {
   static const BASE_URL = "http://api.openweathermap.org/data/2.5/weather";
   final String apiKey;
 
-  Weatherservice({required this.apiKey});
+  WeatherService({required this.apiKey});
 
   Future<Weather> getWeather(String cityName) async {
     final response = await http

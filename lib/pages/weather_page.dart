@@ -3,6 +3,7 @@ import 'package:lottie/lottie.dart';
 import 'package:minimal_weather_app/helpers/date.helper.dart';
 import 'package:minimal_weather_app/models/weather.model.dart';
 import 'package:minimal_weather_app/services/weather.service.dart';
+import 'package:minimal_weather_app/utils/colors.dart';
 
 class WeatherPage extends StatefulWidget {
   const WeatherPage({super.key});
@@ -14,7 +15,7 @@ class WeatherPage extends StatefulWidget {
 class _WeatherPageState extends State<WeatherPage> {
   // api key
   final _weatherService =
-      Weatherservice(apiKey: '4f603bfd14a0494c7463d2bbfcf12ad9');
+      WeatherService(apiKey: '4f603bfd14a0494c7463d2bbfcf12ad9');
   Weather? _weather;
   String? _currentDate;
 
@@ -84,46 +85,113 @@ class _WeatherPageState extends State<WeatherPage> {
     );
   }
 
-  Center _body(BuildContext context) {
-    return Center(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-        children: [
-          // ##### city name
-          Column(
-            children: [
-              Icon(Icons.location_on),
-              SizedBox(height: 6),
-              Text(
-                _weather?.cityName ?? "Loading City...",
-                style: Theme.of(context).textTheme.headlineMedium,
-              ),
-            ],
-          ),
+  SafeArea _body(BuildContext context) {
+    return SafeArea(
+      child: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          children: [
+            // ##### city name
+            Column(
+              children: [
+                Icon(Icons.location_on),
+                SizedBox(height: 4),
+                Text(
+                  _weather?.cityName ?? "Loading City...",
+                  style: Theme.of(context).textTheme.titleLarge,
+                ),
+              ],
+            ),
 
-          // ##### animation
-          Lottie.asset(
-            _getWeatherAnimation(_weather?.mainCondition),
-          ),
+            // ##### animation
+            Lottie.asset(
+              _getWeatherAnimation(_weather?.mainCondition),
+            ),
 
-          // ##### temperature
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              Text(
-                '${_weather?.temperature.round().toString()}°',
-                style: Theme.of(context).textTheme.displayLarge,
-              ),
+            // ##### temperature
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                Text(
+                  '${_weather?.temperature.round().toString()}°',
+                  style: Theme.of(context).textTheme.displayLarge,
+                ),
 
-              // condition
-              Text(
-                _weather?.mainCondition ?? "",
-                style: Theme.of(context).textTheme.titleLarge,
-              )
-            ],
-          ),
-        ],
+                // condition
+                Text(
+                  _weather?.mainCondition ?? "",
+                  style: Theme.of(context).textTheme.titleLarge,
+                ),
+
+                SizedBox(height: 40),
+
+                _additionalWeatherInfo(context)
+              ],
+            ),
+          ],
+        ),
       ),
+    );
+  }
+
+  Row _additionalWeatherInfo(BuildContext context) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        Column(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            Row(
+              children: [
+                Icon(Icons.water_drop_rounded),
+                SizedBox(width: 4),
+                Text(
+                  'Humid',
+                  style: Theme.of(context).textTheme.titleLarge,
+                ),
+              ],
+            ),
+            Padding(
+              padding: const EdgeInsets.only(left: 18),
+              child: Text(
+                '${_weather?.humidity.round().toString()}%',
+                style: Theme.of(context).textTheme.titleLarge,
+              ),
+            ),
+          ],
+        ),
+        SizedBox(
+          height: 40,
+          child: VerticalDivider(
+            width: 40,
+            thickness: 1,
+            color: DarkMode.foreground.withValues(alpha: 0.2),
+          ),
+        ),
+        // SizedBox(width: 20),
+        Column(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            Row(
+              children: [
+                Icon(Icons.air_rounded),
+                SizedBox(width: 4),
+                Text(
+                  'Wind',
+                  style: Theme.of(context).textTheme.titleLarge,
+                ),
+              ],
+            ),
+            Padding(
+              padding: const EdgeInsets.only(left: 12),
+              child: Text(
+                '${_weather?.wind.round().toString()}m/s',
+                style: Theme.of(context).textTheme.titleLarge,
+              ),
+            ),
+          ],
+        ),
+      ],
     );
   }
 
@@ -135,7 +203,7 @@ class _WeatherPageState extends State<WeatherPage> {
           children: [
             Text(
               _currentDate ?? "",
-              style: Theme.of(context).textTheme.titleLarge,
+              style: Theme.of(context).textTheme.titleMedium,
             ),
           ],
         ),
