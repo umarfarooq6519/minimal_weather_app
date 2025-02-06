@@ -1,9 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:lottie/lottie.dart';
+import 'package:liquid_pull_to_refresh/liquid_pull_to_refresh.dart';
+
 import 'package:minimal_weather_app/helpers/date.helper.dart';
 import 'package:minimal_weather_app/models/weather.model.dart';
 import 'package:minimal_weather_app/services/weather.service.dart';
-import 'package:minimal_weather_app/utils/colors.dart';
+import 'package:minimal_weather_app/theme/theme.dart';
+import 'package:minimal_weather_app/theme/theme.provider.dart';
+import 'package:provider/provider.dart';
 
 class WeatherPage extends StatefulWidget {
   const WeatherPage({super.key});
@@ -19,8 +23,8 @@ class _WeatherPageState extends State<WeatherPage> {
   Weather? _weather;
   String? _currentDate;
 
-  // fetch weather
-  _fetchWeather() async {
+  // fetch weather from weather service
+  Future<void> _fetchWeather() async {
     // get current city
     String cityName = await _weatherService.getCurrentCity();
 
@@ -81,27 +85,25 @@ class _WeatherPageState extends State<WeatherPage> {
       appBar: _appBar(context),
 
       // ##### Body
-      body: _body(context),
+      body: LiquidPullToRefresh(
+        // fetch weather again on pull to refresh
+        onRefresh: _fetchWeather,
+        color: Theme.of(context).colorScheme.onSurface,
+        backgroundColor: Theme.of(context).colorScheme.surface,
+        springAnimationDurationInMilliseconds: 300,
+        child: _body(context),
+      ),
     );
   }
 
-  SafeArea _body(BuildContext context) {
-    return SafeArea(
+  SingleChildScrollView _body(BuildContext context) {
+    return SingleChildScrollView(
+      physics: AlwaysScrollableScrollPhysics(),
       child: Center(
         child: Column(
-          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          mainAxisAlignment: MainAxisAlignment.center,
           children: [
             // ##### city name
-            Column(
-              children: [
-                Icon(Icons.location_on),
-                SizedBox(height: 4),
-                Text(
-                  _weather?.cityName ?? "Loading City...",
-                  style: Theme.of(context).textTheme.titleLarge,
-                ),
-              ],
-            ),
 
             // ##### animation
             Lottie.asset(
@@ -123,7 +125,7 @@ class _WeatherPageState extends State<WeatherPage> {
                   style: Theme.of(context).textTheme.titleLarge,
                 ),
 
-                SizedBox(height: 40),
+                SizedBox(height: 70),
 
                 _additionalWeatherInfo(context)
               ],
@@ -165,7 +167,8 @@ class _WeatherPageState extends State<WeatherPage> {
           child: VerticalDivider(
             width: 40,
             thickness: 1,
-            color: DarkMode.foreground.withValues(alpha: 0.2),
+            color:
+                Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.2),
           ),
         ),
         // SizedBox(width: 20),
@@ -185,7 +188,7 @@ class _WeatherPageState extends State<WeatherPage> {
             Padding(
               padding: const EdgeInsets.only(left: 12),
               child: Text(
-                '${_weather?.wind.round().toString()}m/s',
+                '${_weather?.wind.round().toString()} m/s',
                 style: Theme.of(context).textTheme.titleLarge,
               ),
             ),
@@ -197,23 +200,32 @@ class _WeatherPageState extends State<WeatherPage> {
 
   AppBar _appBar(BuildContext context) {
     return AppBar(
+      backgroundColor: Theme.of(context).colorScheme.surface,
       title: Padding(
-        padding: const EdgeInsets.only(left: 10, top: 20),
-        child: Column(
+        padding: const EdgeInsets.only(left: 10),
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.center,
           children: [
+            Icon(Icons.location_on),
+            SizedBox(width: 4),
             Text(
-              _currentDate ?? "",
-              style: Theme.of(context).textTheme.titleMedium,
+              _weather?.cityName ?? "Loading City...",
+              style:
+                  Theme.of(context).textTheme.titleMedium!.copyWith(height: 0),
             ),
           ],
         ),
       ),
       actions: [
         Padding(
-          padding: const EdgeInsets.only(right: 10, top: 14),
+          padding: const EdgeInsets.only(right: 10),
           child: IconButton(
-            onPressed: _fetchWeather,
-            icon: Icon(Icons.refresh_rounded),
+            onPressed: () {
+              Provider.of<ThemeProvider>(context, listen: false).toggleTheme();
+            },
+            icon: Provider.of<ThemeProvider>(context).themeData == lightMode
+                ? Icon(Icons.dark_mode)
+                : Icon(Icons.light_mode),
           ),
         ),
       ],

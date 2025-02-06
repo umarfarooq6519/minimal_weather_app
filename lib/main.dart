@@ -1,13 +1,18 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+
 import 'package:minimal_weather_app/pages/weather_page.dart';
-import 'package:minimal_weather_app/utils/colors.dart';
+import 'package:minimal_weather_app/theme/theme.provider.dart';
 
 // TODO: Add more weather animations
-// TODO: Add slide from top animation to refresh
-// TODO: Add dark and light mode
 
 void main() {
-  runApp(const MainApp());
+  runApp(
+    ChangeNotifierProvider(
+      create: (context) => ThemeProvider(),
+      child: const MainApp(),
+    ),
+  );
 }
 
 class MainApp extends StatelessWidget {
@@ -17,49 +22,12 @@ class MainApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      theme: ThemeData(
-        fontFamily: 'Bebas Neue',
 
-        // ##### Theme Data
-        scaffoldBackgroundColor: DarkMode.background,
-        iconTheme: _iconTheme(),
-        textTheme: _textTheme(),
-        iconButtonTheme: _iconBtnTheme(),
-        appBarTheme: _appBarTheme(),
-      ),
+      // ##### Theme Data
+      theme: Provider.of<ThemeProvider>(context).themeData,
 
       // ##### HomePage
       home: WeatherPage(),
-    );
-  }
-
-  AppBarTheme _appBarTheme() {
-    return AppBarTheme().copyWith(
-      backgroundColor: DarkMode.background,
-    );
-  }
-
-  IconButtonThemeData _iconBtnTheme() {
-    return IconButtonThemeData(
-      style: ButtonStyle(
-        iconColor: WidgetStatePropertyAll(DarkMode.foreground),
-        iconSize: WidgetStatePropertyAll(20),
-      ),
-    );
-  }
-
-  IconThemeData _iconTheme() {
-    return IconThemeData(
-      color: DarkMode.foreground,
-    );
-  }
-
-  TextTheme _textTheme() {
-    return TextTheme().copyWith(
-      displayLarge: TextStyle(color: DarkMode.foreground),
-      headlineMedium: TextStyle(color: DarkMode.foreground),
-      titleLarge: TextStyle(color: DarkMode.foreground),
-      titleMedium: TextStyle(color: DarkMode.foreground),
     );
   }
 }
